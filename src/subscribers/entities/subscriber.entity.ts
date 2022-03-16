@@ -1,31 +1,34 @@
 import { IsEmail } from "class-validator";
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import * as argon from 'argon2';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
 export class Subscriber {
     @PrimaryGeneratedColumn()
+    @ApiProperty()
     id: number;
 
     @Column()
+    @ApiProperty()
     firstName: string;
 
     @Column()
+    @ApiProperty()
     lastName: string;
 
     @Column()
     @IsEmail()
+    @ApiProperty()
     email: string;
 
     @Column()
+    @ApiProperty()
     password: string;
 
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await argon.hash(this.password);
-    }
+    @CreateDateColumn()
+    create_at: Date
 
-    async validatePassword(password: string): Promise<boolean> {
-        return await argon.verify(this.password, password);
-    }
+    @UpdateDateColumn()
+    updated_at: Date
+
 }

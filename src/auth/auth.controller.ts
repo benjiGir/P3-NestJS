@@ -1,30 +1,35 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { CreateSubscriberDto } from 'src/subscribers/dto/create-subscriber.dto';
+import { Subscriber } from 'src/subscribers/entities/subscriber.entity';
 import { SubscribersService } from 'src/subscribers/subscribers.service';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { LoggingInterceptor } from './logging.interceptors';
 
 @Controller('auth')
+@UseInterceptors(LoggingInterceptor)
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly subscribersService: SubscribersService,
     ) {}
-
+    
     @Post('login')
-    async login(@Body() loginUserDto: LoginUserDto) {
+    @ApiBody({ type: LoginUserDto})
+    async login(@Body() loginUserDto: LoginUserDto): Promise<any> {
         return this.authService.login(loginUserDto);
     }
     
     @Post('register')
-    create(@Body() createSubscriberDto: CreateSubscriberDto) {
+    create(@Body() createSubscriberDto: CreateSubscriberDto): Promise<Subscriber> {
         return this.subscribersService.create(createSubscriberDto);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get()
-    async test() {
-        return 'Success';
+    @Get('verify')
+    async checkEmail(email: string): Promise<Subscriber> {
+        return this.subscribersService.findByEmail(email)
     }
+
 }

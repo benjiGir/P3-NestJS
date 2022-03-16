@@ -1,6 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import * as argon from 'argon2';
+
 import { CreateSubscriberDto } from './dto/create-subscriber.dto';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
 import { Subscriber } from './entities/subscriber.entity';
@@ -48,6 +50,7 @@ export class SubscribersService {
         if (existingSubscriber) throw new ConflictException('User already exists');
 
         const subscriber = this.subscriberRepository.create(createSubscriberDto);
+        subscriber.password = await this.hashPassword(subscriber.password);
 
         return this.subscriberRepository.save(subscriber);
     }
@@ -70,5 +73,13 @@ export class SubscribersService {
         if (!subscriber) throw new NotFoundException(`Subscriber #${id} not found`)
 
         return await this.subscriberRepository.delete({ id: subscriber.id });
+    }
+
+    async hashPassword(password: string): Promise<string> {
+        return await argon.hash(password);
+    }
+
+    async validatePassword(password: string, userPassword: string): Promise<boolean> {
+        return await argon.verify(userPassword, password);
     }
 }

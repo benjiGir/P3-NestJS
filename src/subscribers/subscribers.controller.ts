@@ -1,32 +1,54 @@
 import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { DeleteResult } from 'typeorm';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
+import { Subscriber } from './entities/subscriber.entity';
 import { SubscribersService } from './subscribers.service';
 
+@ApiBearerAuth()
+@ApiTags('subscribers')
 @Controller('subscribers')
 export class SubscribersController {
     constructor(
         private readonly subscribersService: SubscribersService,
     ) {}
-
+    
+    @UseGuards(JwtAuthGuard)
     @Get()
-    findAll() {
-        return this.subscribersService.findAll();
+    @ApiOkResponse({
+        description: 'Array of subscriber registered returned',
+        type: [Subscriber]
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized access'
+    })
+    async findAll(): Promise<Subscriber[]> {
+        return await this.subscribersService.findAll();
     }
 
-    //@UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.subscribersService.findOne(id);
+    @ApiOkResponse({
+        description: 'Return the subscriber that has the searched id',
+        type: Subscriber
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized access'
+    })
+    async findOne(@Param('id') id: string): Promise<Subscriber> {
+        return await this.subscribersService.findOne(id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateSubscriberDto: UpdateSubscriberDto) {
-        return this.subscribersService.update(id, updateSubscriberDto);
+    async update(@Param('id') id: string, @Body() updateSubscriberDto: UpdateSubscriberDto): Promise<Subscriber> {
+        return await this.subscribersService.update(id, updateSubscriberDto);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.subscribersService.remove(id);
+    async remove(@Param('id') id: string): Promise<DeleteResult> {
+        return await this.subscribersService.remove(id);
     }
 }

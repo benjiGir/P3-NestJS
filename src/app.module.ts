@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RecipientsModule } from './recipients/recipients.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { ConfigModule } from '@nestjs/config';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    AuthModule
+    AuthModule,
+    RecipientsModule
   ],
   controllers: [AppController],
   providers: [AppService],
