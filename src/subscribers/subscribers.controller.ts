@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/enum/role.enum';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/role.guard';
 import { DeleteResult } from 'typeorm';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
 import { Subscriber } from './entities/subscriber.entity';
@@ -40,7 +43,8 @@ export class SubscribersController {
         return await this.subscribersService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(RoleGuard)
+    @Roles(Role.Admin)
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateSubscriberDto: UpdateSubscriberDto): Promise<Subscriber> {
         return await this.subscribersService.update(id, updateSubscriberDto);

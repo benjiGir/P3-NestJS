@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
+import { Role } from "../../auth/enum/role.enum";
 
 export class CreateSubscriberDto {
 
@@ -18,4 +19,7 @@ export class CreateSubscriberDto {
     @IsString()
     @ApiProperty()
     readonly password: string;
+
+    @IsString()
+    readonly role: Role;
 }

@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LoggingInterceptor } from './logging.interceptors';
+import { Public } from "./decorators/public.decorator";
 
 @Controller('auth')
 @UseInterceptors(LoggingInterceptor)
@@ -15,13 +16,15 @@ export class AuthController {
         private readonly authService: AuthService,
         private readonly subscribersService: SubscribersService,
     ) {}
-    
+
+    @Public()
     @Post('login')
     @ApiBody({ type: LoginUserDto})
     async login(@Body() loginUserDto: LoginUserDto): Promise<any> {
         return this.authService.login(loginUserDto);
     }
-    
+
+    @Public()
     @Post('register')
     create(@Body() createSubscriberDto: CreateSubscriberDto): Promise<Subscriber> {
         return this.subscribersService.create(createSubscriberDto);
