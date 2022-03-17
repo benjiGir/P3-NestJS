@@ -1,12 +1,12 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateRecipientDto {
-    @IsString()
-    readonly firstName: string
+  @IsString()
+  readonly firstName: string;
 
-    @IsString()
-    readonly lastName: string
+  @IsString()
+  readonly lastName: string;
 
-    @IsNumber()
-    readonly subscriberID: number
+  @IsNumber()
+  readonly subscriberID: number;
 }

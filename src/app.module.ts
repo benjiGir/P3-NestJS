@@ -6,8 +6,8 @@ import { SubscribersModule } from './subscribers/subscribers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RecipientsModule } from './recipients/recipients.module';
-import { APP_GUARD } from "@nestjs/core";
-import { JwtAuthGuard } from "./auth/jwt-auth.guard";
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -26,15 +26,15 @@ import { JwtAuthGuard } from "./auth/jwt-auth.guard";
       synchronize: true,
     }),
     AuthModule,
-    RecipientsModule
+    RecipientsModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule {}
